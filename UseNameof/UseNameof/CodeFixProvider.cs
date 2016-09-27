@@ -18,7 +18,7 @@ namespace UseNameof
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseNameofCodeFixProvider)), Shared]
     public class UseNameofCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Make uppercase";
+        private const string _title = "Make uppercase";
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
@@ -45,9 +45,9 @@ namespace UseNameof
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: title,
+                    title: _title,
                     createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
-                    equivalenceKey: title),
+                    equivalenceKey: _title),
                 diagnostic);
         }
 

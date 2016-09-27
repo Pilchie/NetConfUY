@@ -17,35 +17,69 @@ namespace UseNameof
 
         // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
         // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Localizing%20Analyzers.md for more on localization
-        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(Resources.AnalyzerTitle), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
-        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
-        private const string Category = "Naming";
+        private static readonly LocalizableString _title = new LocalizableResourceString(nameof(Resources.AnalyzerTitle), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString _messageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
+        private static readonly LocalizableString _description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
+        private const string _category = "Correctness";
 
-        private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Description);
+        private static DiagnosticDescriptor _rule = new DiagnosticDescriptor(DiagnosticId, _title, _messageFormat, _category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(_rule); } }
 
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
-            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+            context.RegisterSyntaxNodeAction<SyntaxKind>(
+                AnalyzeSyntax,
+                SyntaxKind.ObjectCreationExpression,
+                SyntaxKind.InvocationExpression);
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        private void AnalyzeSyntax(SyntaxNodeAnalysisContext context)
         {
-            // TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
-            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-
-            // Find just those named type symbols with names containing lowercase letters.
-            if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
+            var argumentList = GetArguments(context.Node);
+            if (argumentList.Arguments.Count == 0)
             {
-                // For all such symbols, produce a diagnostic.
-                var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
-
-                context.ReportDiagnostic(diagnostic);
+                return;
             }
+
+            var methodSymbol = context.SemanticModel.GetSymbolInfo(
+                context.Node,
+                context.CancellationToken).Symbol as IMethodSymbol;
+
+            if (methodSymbol == null)
+            {
+                return;
+            }
+
+            // TODO: Handle named arguments.
+            for (var i = 0; i < argumentList.Arguments.Count && i < methodSymbol.Parameters.Length; i++)
+            {
+                var argument = argumentList.Arguments[i].Expression;
+                if (argument.Kind() == SyntaxKind.StringLiteralExpression &&
+                    methodSymbol.Parameters[i].Name == "paramName")
+                {
+                    var parameters = context.Node
+                        .FirstAncestorOrSelf<BaseMethodDeclarationSyntax>()
+                        ?.ParameterList.Parameters;
+
+                    var argumentValue = ((LiteralExpressionSyntax)argument).Token.ValueText;
+                    if (parameters?.Any(p => p.Identifier.ValueText == argumentValue) == true)
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                _rule,
+                                argument.GetLocation(),
+                                $"{argumentValue}"));
+                    }
+                }
+            }
+        }
+
+        private ArgumentListSyntax GetArguments(SyntaxNode node)
+        {
+            return node.Kind() == SyntaxKind.ObjectCreationExpression
+                ? ((ObjectCreationExpressionSyntax)node).ArgumentList
+                : ((InvocationExpressionSyntax)node).ArgumentList;
         }
     }
 }
