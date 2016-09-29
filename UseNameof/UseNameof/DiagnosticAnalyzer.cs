@@ -22,13 +22,18 @@ namespace UseNameof
         private static readonly LocalizableString _description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
         private const string _category = "Correctness";
 
-        private static DiagnosticDescriptor _rule = new DiagnosticDescriptor(DiagnosticId, _title, _messageFormat, _category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: _description);
+        private static DiagnosticDescriptor _rule = new DiagnosticDescriptor(
+            DiagnosticId, _title, _messageFormat, _category, DiagnosticSeverity.Warning,
+            isEnabledByDefault: true, description: _description);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(_rule); } }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get { return ImmutableArray.Create(_rule); }
+        }
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction<SyntaxKind>(
+            context.RegisterSyntaxNodeAction(
                 AnalyzeSyntax,
                 SyntaxKind.ObjectCreationExpression,
                 SyntaxKind.InvocationExpression);
@@ -36,8 +41,8 @@ namespace UseNameof
 
         private void AnalyzeSyntax(SyntaxNodeAnalysisContext context)
         {
-            var argumentList = GetArguments(context.Node);
-            if (argumentList.Arguments.Count == 0)
+            var arguments = GetArguments(context.Node);
+            if (arguments.Count == 0)
             {
                 return;
             }
@@ -52,9 +57,9 @@ namespace UseNameof
             }
 
             // TODO: Handle named arguments.
-            for (var i = 0; i < argumentList.Arguments.Count && i < methodSymbol.Parameters.Length; i++)
+            for (var i = 0; i < arguments.Count && i < methodSymbol.Parameters.Length; i++)
             {
-                var argument = argumentList.Arguments[i].Expression;
+                var argument = arguments[i].Expression;
                 if (argument.Kind() == SyntaxKind.StringLiteralExpression &&
                     methodSymbol.Parameters[i].Name == "paramName")
                 {
@@ -75,11 +80,11 @@ namespace UseNameof
             }
         }
 
-        private ArgumentListSyntax GetArguments(SyntaxNode node)
+        private SeparatedSyntaxList<ArgumentSyntax> GetArguments(SyntaxNode node)
         {
             return node.Kind() == SyntaxKind.ObjectCreationExpression
-                ? ((ObjectCreationExpressionSyntax)node).ArgumentList
-                : ((InvocationExpressionSyntax)node).ArgumentList;
+                ? ((ObjectCreationExpressionSyntax)node).ArgumentList.Arguments
+                : ((InvocationExpressionSyntax)node).ArgumentList.Arguments;
         }
     }
 }
