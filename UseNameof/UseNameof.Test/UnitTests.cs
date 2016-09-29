@@ -11,10 +11,8 @@ namespace UseNameof.Test
     [TestClass]
     public class UnitTest : CodeFixVerifier
     {
-
-        //No diagnostics expected to show up
         [TestMethod]
-        public void TestMethod1()
+        public void DoesNotShowInEmptyFile()
         {
             var test = @"";
 
@@ -23,49 +21,39 @@ namespace UseNameof.Test
 
         //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        public void TestMethod2()
+        public void ShowsForArgumentNullException()
         {
             var test = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
+class C 
+{
+    void M(string s)
     {
-        class TypeName
-        {   
-        }
-    }";
+        if (s == null)
+            throw new System.ArgumentNullException(""s"");
+    }
+}";
             var expected = new DiagnosticResult
             {
                 Id = "UseNameof",
-                Message = String.Format("Type name '{0}' contains lowercase letters", "TypeName"),
+                Message = "Use 'nameof(s)' instead of \"s\".",
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
                     new[] {
-                            new DiagnosticResultLocation("Test0.cs", 11, 15)
+                            new DiagnosticResultLocation("Test0.cs", 7, 52)
                         }
             };
 
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
+class C 
+{
+    void M(string s)
     {
-        class TYPENAME
-        {   
-        }
-    }";
+        if (s == null)
+            throw new System.ArgumentNullException(nameof(s));
+    }
+}";
             VerifyCSharpFix(test, fixtest);
         }
 

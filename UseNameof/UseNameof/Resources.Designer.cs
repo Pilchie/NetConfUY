@@ -71,7 +71,7 @@ namespace UseNameof {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use &apos;nameof({0})&apos;, instead of &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Use &apos;nameof({0})&apos; instead of &quot;{0}&quot;..
         /// </summary>
         internal static string AnalyzerMessageFormat {
             get {
