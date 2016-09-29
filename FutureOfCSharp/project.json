@@ -3,7 +3,7 @@
         "net462": {}
     },
     "dependencies":{
-    
+        "System.ValueTuple": "4.0.0-rc3-24212-01"
     },
     "runtimes": {
         "win": {}

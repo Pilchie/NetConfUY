@@ -52,3 +52,4 @@ Temporary Items
 .vs/
 *.*proj.user
 packages/
+project.lock.json

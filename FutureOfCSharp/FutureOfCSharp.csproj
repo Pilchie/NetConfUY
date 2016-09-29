@@ -47,12 +47,6 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\System.ValueTuple\System.ValueTuple.csproj">
-      <Project>{d4c79545-8009-42d0-bc98-4488cb069b82}</Project>
-      <Name>System.ValueTuple</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
