@@ -23,6 +23,8 @@ Come see what's in the pipeline for C# developers in Visual Studio "15".  In thi
 From a fast, low-impact setup, to improvements in editing, navigation, and refactoring, to additional quick fixes and more support for enforcing code style,
 there's a lot to look forward to.
 
+See [xunit.runner.wpf](https://github.com/Pilchie/xunit.runner.wpf) for the code I edited during the presentation.
+
 Saturday - 12:45.
 
 
