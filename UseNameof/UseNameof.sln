@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.25722.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UseNameof", "UseNameof\UseNameof\UseNameof.csproj", "{A2F9F45A-5D88-4555-88E2-072F46963425}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UseNameof", "UseNameof\UseNameof.csproj", "{A2F9F45A-5D88-4555-88E2-072F46963425}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UseNameof.Test", "UseNameof\UseNameof.Test\UseNameof.Test.csproj", "{9EBE7613-2E6F-475C-AC44-7F4D3EE916D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UseNameof.Test", "UseNameof.Test\UseNameof.Test.csproj", "{9EBE7613-2E6F-475C-AC44-7F4D3EE916D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UseNameof.Vsix", "UseNameof\UseNameof.Vsix\UseNameof.Vsix.csproj", "{EFA7A94B-9BE4-4234-869C-D4A2C4A2B4C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UseNameof.Vsix", "UseNameof.Vsix\UseNameof.Vsix.csproj", "{EFA7A94B-9BE4-4234-869C-D4A2C4A2B4C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
